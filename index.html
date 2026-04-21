@@ -14,17 +14,17 @@
   body { font-family: -apple-system, 'Segoe UI', sans-serif; background: var(--cream); color: var(--navy); }
 
   .top-bar { height: 5px; background: linear-gradient(90deg, var(--teal), var(--gold), var(--teal)); }
-  .header { background: var(--navy); padding: 24px 32px 20px; }
-  .header-badge { display: inline-block; background: rgba(200,168,75,0.18); border: 1px solid var(--gold); border-radius: 4px; padding: 4px 14px; font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
-  .header h1 { font-size: 22px; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
+  .header { background: var(--navy); padding: 20px 20px 18px; }
+  .header-badge { display: inline-block; background: rgba(200,168,75,0.18); border: 1px solid var(--gold); border-radius: 4px; padding: 4px 12px; font-size: 10px; color: var(--gold); letter-spacing: 1.8px; text-transform: uppercase; margin-bottom: 10px; }
+  .header h1 { font-size: 20px; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
   .header h1 em { color: var(--teal-lt); font-style: italic; }
-  .header-sub { font-size: 13px; color: rgba(255,255,255,0.55); }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.5; }
   .divider-bar { height: 3px; background: linear-gradient(90deg, var(--teal), var(--gold), var(--teal)); }
 
-  .content { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
+  .content { max-width: 900px; margin: 0 auto; padding: 22px 16px 50px; }
 
-  .section { margin-bottom: 36px; }
-  .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); font-family: monospace; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #dde2ea; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); font-family: monospace; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #dde2ea; }
 
   /* GANTT */
   .gantt { width: 100%; border-radius: 10px; overflow: hidden; background: var(--white); box-shadow: 0 2px 12px rgba(11,31,58,0.08); }
@@ -32,14 +32,20 @@
   .gantt-row:last-child { border-bottom: none; }
   .gantt-label { width: 200px; flex-shrink: 0; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--navy); border-right: 1px solid #eef1f5; line-height: 1.3; }
   .gantt-label span { display: block; font-size: 11px; color: var(--gray); font-weight: 400; margin-top: 2px; }
-  .gantt-timeline { flex: 1; padding: 10px 12px; position: relative; height: 60px; }
+  .gantt-timeline { flex: 1; padding: 10px 12px; position: relative; height: 60px; min-width: 100px; }
   .gantt-bar { position: absolute; height: 28px; border-radius: 14px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; padding: 0 12px; font-size: 11px; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; }
   .gantt-header { background: var(--navy); }
   .gantt-header .gantt-label { color: var(--gold); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
   .gantt-header .month { flex: 1; text-align: center; font-size: 10px; color: rgba(255,255,255,0.5); padding: 10px 0; }
+  @media (max-width: 600px) {
+    .gantt-label { width: 120px; padding: 10px 12px; font-size: 12px; }
+  }
 
   /* PHASE CARDS */
-  .phase-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .phase-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  @media (max-width: 720px) {
+    .phase-cards { grid-template-columns: 1fr; }
+  }
   .phase-card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(11,31,58,0.08); }
   .phase-card-head { padding: 14px 16px; }
   .phase-card-head.p1 { background: #EEF1F5; }
@@ -69,9 +75,12 @@
   .chart-wrap { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(11,31,58,0.08); }
   .chart-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
 
-  .footer-band { background: var(--navy); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
-  .footer-band span { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .footer-band { background: var(--navy); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .footer-band span { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.5; }
   .footer-band strong { color: rgba(255,255,255,0.8); }
+  @media (max-width: 500px) {
+    .footer-band { flex-direction: column; align-items: flex-start; text-align: left; }
+  }
 </style>
 </head>
 <body>
