@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variables Clínicas – Estudio Ictus UI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root { --navy:#0B1F3A; --teal:#0D6E6E; --teal-lt:#1EB8B8; --gold:#C8A84B; --cream:#F0EDE6; --white:#FFF; --gray:#6B7A90; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:-apple-system,'Segoe UI',sans-serif; background:var(--cream); color:var(--navy); }
+  .top-bar { height:5px; background:linear-gradient(90deg,var(--teal),var(--gold),var(--teal)); }
+  .header { background:var(--navy); padding:24px 32px 20px; }
+  .header-badge { display:inline-block; background:rgba(200,168,75,0.18); border:1px solid var(--gold); border-radius:4px; padding:4px 14px; font-size:11px; color:var(--gold); letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+  .header h1 { font-size:22px; color:var(--white); line-height:1.3; margin-bottom:6px; }
+  .header h1 em { color:var(--teal-lt); font-style:italic; }
+  .header-sub { font-size:13px; color:rgba(255,255,255,0.55); }
+  .divider-bar { height:3px; background:linear-gradient(90deg,var(--teal),var(--gold),var(--teal)); }
+  .content { max-width:900px; margin:0 auto; padding:28px 20px 60px; }
+  .section { margin-bottom:36px; }
+  .section-title { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gray); font-family:monospace; margin-bottom:16px; padding-bottom:8px; border-bottom:1px solid #dde2ea; }
+  .chart-wrap { background:var(--white); border-radius:12px; padding:20px; box-shadow:0 2px 12px rgba(11,31,58,0.08); margin-bottom:16px; }
+  .chart-title { font-size:14px; font-weight:700; color:var(--navy); margin-bottom:16px; }
+
+  /* Variable Cards */
+  .var-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .var-card { background:var(--white); border-radius:10px; padding:14px 16px; box-shadow:0 2px 8px rgba(11,31,58,0.07); display:flex; gap:12px; align-items:flex-start; }
+  .var-card-ico { font-size:22px; flex-shrink:0; }
+  .var-card-name { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:4px; line-height:1.3; }
+  .var-card-desc { font-size:12px; color:var(--gray); line-height:1.5; }
+  .var-card-type { display:inline-block; font-size:10px; padding:2px 7px; border-radius:10px; font-weight:600; margin-top:5px; }
+  .var-card-type.direct { background:rgba(13,110,110,0.1); color:var(--teal); }
+  .var-card-type.hc { background:rgba(200,168,75,0.15); color:#7a6020; }
+  .var-card-type.ingreso { background:rgba(11,31,58,0.1); color:var(--navy); }
+
+  .legend-row { display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+  .legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--navy); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+  .stat-box { background:var(--white); border-radius:10px; padding:16px; text-align:center; box-shadow:0 2px 8px rgba(11,31,58,0.07); }
+  .stat-box .num { font-size:36px; font-weight:700; line-height:1; margin-bottom:6px; }
+  .stat-box .lbl { font-size:12px; color:var(--gray); line-height:1.4; }
+  .num.teal { color:var(--teal); } .num.gold { color:var(--gold); } .num.navy { color:var(--navy); }
+
+  .footer-band { background:var(--navy); padding:16px 32px; display:flex; justify-content:space-between; align-items:center; }
+  .footer-band span { font-size:12px; color:rgba(255,255,255,0.5); }
+  .footer-band strong { color:rgba(255,255,255,0.8); }
+</style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div class="header">
+  <div class="header-badge">SEEIUC · Estudio Ictus</div>
+  <h1>Variables e Ítems de Práctica Clínica<br><em>Evaluación enfermería unidad de ictus</em></h1>
+  <div class="header-sub">Daniel Collado Moreno (IP) · CRD ad hoc REDCap · 34 variables totales · 13 ítems práctica clínica</div>
+</div>
+<div class="divider-bar"></div>
+
+<div class="content">
+
+  <div class="stats-grid">
+    <div class="stat-box"><div class="num teal">34</div><div class="lbl">Variables totales en CRD REDCap</div></div>
+    <div class="stat-box"><div class="num gold">13</div><div class="lbl">Ítems de práctica clínica observada</div></div>
+    <div class="stat-box"><div class="num navy">8</div><div class="lbl">Variables independientes de la enfermera</div></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Distribución de variables por tipo</div>
+    <div class="chart-wrap">
+      <canvas id="varChart" height="220"></canvas>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Ítems de práctica clínica observada — Detalle</div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div> Observación directa al paciente</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Historia clínica (registros)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div> Valoración al ingreso (&lt;2h)</div>
+    </div>
+    <div class="var-grid">
+      <div class="var-card">
+        <div class="var-card-ico">💉</div>
+        <div>
+          <div class="var-card-name">Pulsioximetría en hemicuerpo afectado</div>
+          <div class="var-card-desc">Se evalúa si el sensor está colocado en el lado afectado del paciente, según protocolo específico de ictus.</div>
+          <span class="var-card-type direct">Observación directa</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🩺</div>
+        <div>
+          <div class="var-card-name">Manguito TA en hemicuerpo sano</div>
+          <div class="var-card-desc">El manguito debe colocarse en el hemicuerpo no afectado para no interferir con la circulación del lado parésico.</div>
+          <span class="var-card-type direct">Observación directa</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🔌</div>
+        <div>
+          <div class="var-card-name">Accesos venosos en hemicuerpo sano</div>
+          <div class="var-card-desc">Los accesos venosos periféricos deben ubicarse en el hemicuerpo sano siempre que sea posible.</div>
+          <span class="var-card-type direct">Observación directa</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🪑</div>
+        <div>
+          <div class="var-card-name">Silla familiar en lado afectado</div>
+          <div class="var-card-desc">La silla para familiares debe ubicarse en el lado hemipléjico para estimular la atención hacia ese lado.</div>
+          <span class="var-card-type direct">Observación directa</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🧠</div>
+        <div>
+          <div class="var-card-name">Registro evaluación motora</div>
+          <div class="var-card-desc">Al menos un registro con evaluación motora en el curso clínico durante el turno de trabajo.</div>
+          <span class="var-card-type hc">Historia clínica</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🔄</div>
+        <div>
+          <div class="var-card-name">Registro cambios posturales</div>
+          <div class="var-card-desc">Registro en la historia clínica relacionado con la movilización del paciente durante el turno.</div>
+          <span class="var-card-type hc">Historia clínica</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🥤</div>
+        <div>
+          <div class="var-card-name">Test disfagia MECV-V</div>
+          <div class="var-card-desc">Registro del test de disfagia una vez indicado inicio de ingesta vía oral. N/A si el paciente está en ayunas.</div>
+          <span class="var-card-type hc">Historia clínica</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">📊</div>
+        <div>
+          <div class="var-card-name">Escala de Coma de Glasgow al ingreso</div>
+          <div class="var-card-desc">Valoración neurológica dentro de las 2 primeras horas desde la entrada del paciente en la unidad.</div>
+          <span class="var-card-type ingreso">Ingreso &lt;2h</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">👁</div>
+        <div>
+          <div class="var-card-name">Valoración pupilar al ingreso</div>
+          <div class="var-card-desc">Registro de la valoración pupilar en el ingreso del paciente en la unidad (&lt;2h desde entrada).</div>
+          <span class="var-card-type ingreso">Ingreso &lt;2h</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">🛏</div>
+        <div>
+          <div class="var-card-name">Escala BRADEN al ingreso</div>
+          <div class="var-card-desc">Valoración del riesgo de úlceras por presión en las primeras 2 horas desde el ingreso en la UI.</div>
+          <span class="var-card-type ingreso">Ingreso &lt;2h</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">⚠️</div>
+        <div>
+          <div class="var-card-name">Escala DOWNTON al ingreso</div>
+          <div class="var-card-desc">Valoración del riesgo de caídas durante las primeras 2 horas tras el ingreso en la unidad de ictus.</div>
+          <span class="var-card-type ingreso">Ingreso &lt;2h</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">⏱</div>
+        <div>
+          <div class="var-card-name">Glasgow / Pupilar / Constantes c/4h (24–72h)</div>
+          <div class="var-card-desc">Registro neurológico y de constantes vitales cada 4 horas o menos entre las 24 y 72h desde el ingreso.</div>
+          <span class="var-card-type hc">Historia clínica</span>
+        </div>
+      </div>
+      <div class="var-card">
+        <div class="var-card-ico">⏰</div>
+        <div>
+          <div class="var-card-name">Glasgow / Pupilar / Constantes c/8h (&gt;72h)</div>
+          <div class="var-card-desc">A partir de las 72h se acepta un registro cada 8h si el paciente está estable. Cada 4h si inestable.</div>
+          <span class="var-card-type hc">Historia clínica</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Variables independientes de la enfermera evaluada</div>
+    <div class="chart-wrap">
+      <canvas id="enfChart" height="160"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-band">
+  <span><strong>Estudio Ictus UI</strong> · CRD REDCap v.2025 14.0.19</span>
+  <span>Hospital nivel B · Provincia de Barcelona</span>
+</div>
+
+<script>
+const varCtx = document.getElementById('varChart').getContext('2d');
+new Chart(varCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Pulsioximetría hemicuerpo afectado','Manguito TA hemicuerpo sano','Accesos venosos hemicuerpo sano','Silla familiar lado afectado','Registro evaluación motora','Registro cambios posturales','Test disfagia MECV-V','Glasgow al ingreso','Valoración pupilar ingreso','BRADEN ingreso','DOWNTON ingreso','Glasgow/pupilar/const c/4h','Glasgow/pupilar/const c/8h'],
+    datasets: [{
+      label: 'Peso en el estudio',
+      data: [8,8,7,6,9,8,9,10,10,10,10,9,9],
+      backgroundColor: ['#0D6E6E','#0D6E6E','#0D6E6E','#0D6E6E','#C8A84B','#C8A84B','#C8A84B','#0B1F3A','#0B1F3A','#0B1F3A','#0B1F3A','#C8A84B','#C8A84B'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: { legend:{ display:false }, tooltip:{ callbacks:{ label: (c)=> c.label } } },
+    scales: {
+      x: { display:false, max:12 },
+      y: { ticks:{ font:{size:11}, color:'#0B1F3A' } }
+    }
+  }
+});
+
+const enfCtx = document.getElementById('enfChart').getContext('2d');
+new Chart(enfCtx, {
+  type: 'radar',
+  data: {
+    labels: ['Experiencia\nen UI','Experiencia\nen críticos','Formación\npost-universitaria','Turno\nde trabajo','Tipo de\ncontrato','Nivel Benner\nautopercibido'],
+    datasets: [{
+      label: 'Variable independiente',
+      data: [9,8,7,6,5,10],
+      fill: true,
+      backgroundColor: 'rgba(13,110,110,0.15)',
+      borderColor: '#0D6E6E',
+      pointBackgroundColor: '#C8A84B',
+      borderWidth: 2,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend:{display:false} },
+    scales: { r: { ticks:{display:false}, grid:{color:'rgba(11,31,58,0.1)'}, pointLabels:{font:{size:11},color:'#0B1F3A'} } }
+  }
+});
+</script>
+</body>
+</html>
