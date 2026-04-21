@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma y Fases – Estudio Ictus UI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy: #0B1F3A; --teal: #0D6E6E; --teal-lt: #1EB8B8;
+    --gold: #C8A84B; --cream: #F0EDE6; --white: #FFF; --gray: #6B7A90;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'Segoe UI', sans-serif; background: var(--cream); color: var(--navy); }
+
+  .top-bar { height: 5px; background: linear-gradient(90deg, var(--teal), var(--gold), var(--teal)); }
+  .header { background: var(--navy); padding: 24px 32px 20px; }
+  .header-badge { display: inline-block; background: rgba(200,168,75,0.18); border: 1px solid var(--gold); border-radius: 4px; padding: 4px 14px; font-size: 11px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  .header h1 { font-size: 22px; color: var(--white); line-height: 1.3; margin-bottom: 6px; }
+  .header h1 em { color: var(--teal-lt); font-style: italic; }
+  .header-sub { font-size: 13px; color: rgba(255,255,255,0.55); }
+  .divider-bar { height: 3px; background: linear-gradient(90deg, var(--teal), var(--gold), var(--teal)); }
+
+  .content { max-width: 900px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  .section { margin-bottom: 36px; }
+  .section-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); font-family: monospace; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #dde2ea; }
+
+  /* GANTT */
+  .gantt { width: 100%; border-radius: 10px; overflow: hidden; background: var(--white); box-shadow: 0 2px 12px rgba(11,31,58,0.08); }
+  .gantt-row { display: flex; align-items: center; border-bottom: 1px solid #eef1f5; }
+  .gantt-row:last-child { border-bottom: none; }
+  .gantt-label { width: 200px; flex-shrink: 0; padding: 14px 16px; font-size: 13px; font-weight: 600; color: var(--navy); border-right: 1px solid #eef1f5; line-height: 1.3; }
+  .gantt-label span { display: block; font-size: 11px; color: var(--gray); font-weight: 400; margin-top: 2px; }
+  .gantt-timeline { flex: 1; padding: 10px 12px; position: relative; height: 60px; }
+  .gantt-bar { position: absolute; height: 28px; border-radius: 14px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; padding: 0 12px; font-size: 11px; font-weight: 600; color: var(--white); white-space: nowrap; overflow: hidden; }
+  .gantt-header { background: var(--navy); }
+  .gantt-header .gantt-label { color: var(--gold); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+  .gantt-header .month { flex: 1; text-align: center; font-size: 10px; color: rgba(255,255,255,0.5); padding: 10px 0; }
+
+  /* PHASE CARDS */
+  .phase-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .phase-card { background: var(--white); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(11,31,58,0.08); }
+  .phase-card-head { padding: 14px 16px; }
+  .phase-card-head.p1 { background: #EEF1F5; }
+  .phase-card-head.p2 { background: var(--teal); }
+  .phase-card-head.p3 { background: #EEF1F5; }
+  .ph-num { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace; margin-bottom: 4px; }
+  .phase-card-head.p1 .ph-num, .phase-card-head.p3 .ph-num { color: var(--teal); }
+  .phase-card-head.p2 .ph-num { color: rgba(255,255,255,0.7); }
+  .ph-title { font-size: 16px; font-weight: 700; line-height: 1.2; }
+  .phase-card-head.p2 .ph-title { color: var(--white); }
+  .phase-card-head.p1 .ph-title, .phase-card-head.p3 .ph-title { color: var(--navy); }
+  .ph-date { font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 6px; }
+  .phase-card-body { padding: 14px 16px; }
+  .phase-card-body p { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 8px; }
+  .phase-card-body p:last-child { margin-bottom: 0; }
+  .phase-detail { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+  .phase-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); flex-shrink: 0; margin-top: 5px; }
+  .phase-dot.gold { background: var(--gold); }
+  .phase-detail p { font-size: 12.5px; color: #3a4a5c; line-height: 1.5; }
+
+  /* HAWTHORNE */
+  .hawthorne-box { background: rgba(200,168,75,0.1); border-left: 3px solid var(--gold); padding: 16px 18px; border-radius: 0 10px 10px 0; }
+  .hawthorne-box h3 { font-size: 14px; color: #7a6020; margin-bottom: 8px; }
+  .hawthorne-box p { font-size: 13px; color: #5a4a1a; line-height: 1.6; }
+
+  /* CHART */
+  .chart-wrap { background: var(--white); border-radius: 12px; padding: 20px; box-shadow: 0 2px 12px rgba(11,31,58,0.08); }
+  .chart-title { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 16px; }
+
+  .footer-band { background: var(--navy); padding: 16px 32px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-band span { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .footer-band strong { color: rgba(255,255,255,0.8); }
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+<div class="header">
+  <div class="header-badge">SEEIUC · Estudio Ictus</div>
+  <h1>Cronograma y Fases del Estudio<br><em>Evaluación enfermería unidad de ictus</em></h1>
+  <div class="header-sub">Daniel Collado Moreno (IP) · Hospital de nivel B, Provincia de Barcelona · Versión 2 · 25/02/2026</div>
+</div>
+<div class="divider-bar"></div>
+
+<div class="content">
+
+  <div class="section">
+    <div class="section-title">Cronograma General del Estudio</div>
+    <div class="chart-wrap">
+      <div class="chart-title">Distribución temporal por etapas (2024–2027)</div>
+      <canvas id="ganttChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Fases de Recogida de Datos</div>
+    <div class="phase-cards">
+      <div class="phase-card">
+        <div class="phase-card-head p1">
+          <div class="ph-num">FASE 01</div>
+          <div class="ph-title">Observación PRE</div>
+          <div class="ph-date">Feb – Abr 2026</div>
+        </div>
+        <div class="phase-card-body">
+          <div class="phase-detail"><div class="phase-dot"></div><p>Observación clínica directa y revisión de historia clínica</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Las enfermeras no conocen que están siendo observadas</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>No se revela qué ítems se están evaluando</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Registro en CRD REDCap por investigador designado según cronograma</p></div>
+          <div class="phase-detail"><div class="phase-dot gold"></div><p>Duración: 3 meses ininterrumpidos</p></div>
+        </div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-card-head p2">
+          <div class="ph-num">FASE 02</div>
+          <div class="ph-title">CI + Encuesta</div>
+          <div class="ph-date">Abr – Jul 2026</div>
+        </div>
+        <div class="phase-card-body">
+          <div class="phase-detail"><div class="phase-dot"></div><p>Firma del Consentimiento Informado (impreso)</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Cumplimentación de la encuesta de autopercepción (Benner)</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Se informa que serán observadas su práctica clínica</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Datos volcados a REDCap con código seudonimizado</p></div>
+          <div class="phase-detail"><div class="phase-dot gold"></div><p>Desechados datos de enfermeras sin CI en Fase 1</p></div>
+        </div>
+      </div>
+      <div class="phase-card">
+        <div class="phase-card-head p3">
+          <div class="ph-num">FASE 03</div>
+          <div class="ph-title">Observación POST</div>
+          <div class="ph-date">Ago – Nov 2026</div>
+        </div>
+        <div class="phase-card-body">
+          <div class="phase-detail"><div class="phase-dot"></div><p>Segunda observación clínica directa</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Mismo método que Fase 1 pero enfermeras ya informadas</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Permite medir el efecto Hawthorne por comparación</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>No se observa el mismo día de firma del CI</p></div>
+          <div class="phase-detail"><div class="phase-dot gold"></div><p>Duración: 3 meses consecutivos</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="hawthorne-box">
+      <h3>⚠ Control del Efecto Hawthorne</h3>
+      <p>El diseño longitudinal con dos momentos de observación (pre y post conocimiento) permite detectar y cuantificar las modificaciones del comportamiento derivadas de la consciencia de ser observado. La Fase 1 se realiza sin conocimiento previo de las enfermeras, garantizando una medición basal no contaminada. La comparación entre Fases 1 y 3 permitirá estimar la magnitud del efecto Hawthorne y ajustar los resultados si fuera necesario.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Distribución de observaciones por turno</div>
+    <div class="chart-wrap">
+      <div class="chart-title">Modalidades de turno incluidas en la recogida de datos</div>
+      <canvas id="turnosChart" height="180"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-band">
+  <span><strong>Estudio Ictus UI</strong> · Daniel Collado Moreno (IP)</span>
+  <span>Hospital nivel B · Provincia de Barcelona · CEIC aprobado</span>
+</div>
+
+<script>
+// Gantt chart using horizontal bar
+const ganttCtx = document.getElementById('ganttChart').getContext('2d');
+new Chart(ganttCtx, {
+  type: 'bar',
+  data: {
+    labels: ['1. Protocolo y bibliografía', '2. Validación e ética', '3. Recogida de datos', '4. Análisis y resultados', '5. Difusión y publicación'],
+    datasets: [
+      {
+        label: 'Inicio (offset)',
+        data: [0, 24, 25, 34, 37],
+        backgroundColor: 'transparent',
+      },
+      {
+        label: 'Duración (meses)',
+        data: [24, 2, 10, 2, 3],
+        backgroundColor: ['#0D6E6E','#1EB8B8','#C8A84B','#0B1F3A','#6B7A90'],
+        borderRadius: 8,
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: { legend: { display: false }, tooltip: {
+      callbacks: {
+        label: (ctx) => {
+          if (ctx.datasetIndex === 0) return null;
+          const labels = ['Ene 2024 – Dic 2025','Dic 2025 – Ene 2026','Feb – Nov 2026','Dic 2026 – Ene 2027','Feb – Abr 2027'];
+          return labels[ctx.dataIndex];
+        }
+      }
+    }},
+    scales: {
+      x: { stacked: true, display: false },
+      y: { stacked: true, ticks: { font: { size: 12 }, color: '#0B1F3A' } }
+    }
+  }
+});
+
+// Turnos chart
+const turnosCtx = document.getElementById('turnosChart').getContext('2d');
+new Chart(turnosCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Turno Día (7h)', 'Turno Tarde (7h)', 'Turno Día 12h', 'Turno Noche 10h', 'Turno Noche 12h'],
+    datasets: [{
+      data: [30, 25, 20, 15, 10],
+      backgroundColor: ['#0D6E6E','#1EB8B8','#C8A84B','#0B1F3A','#6B7A90'],
+      borderWidth: 2, borderColor: '#F0EDE6'
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 12 }, color: '#0B1F3A', padding: 16 } },
+      tooltip: { callbacks: { label: (ctx) => ` ${ctx.label}: incluido en recogida` } }
+    }
+  }
+});
+</script>
+</body>
+</html>
