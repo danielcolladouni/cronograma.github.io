@@ -42,7 +42,7 @@
   }
 
   /* PHASE CARDS */
-  .phase-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+  .phase-cards { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   @media (max-width: 720px) {
     .phase-cards { grid-template-columns: 1fr; }
   }
@@ -51,13 +51,17 @@
   .phase-card-head.p1 { background: #EEF1F5; }
   .phase-card-head.p2 { background: var(--teal); }
   .phase-card-head.p3 { background: #EEF1F5; }
+  .phase-card-head.p4 { background: var(--gold); }
   .ph-num { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; font-family: monospace; margin-bottom: 4px; }
   .phase-card-head.p1 .ph-num, .phase-card-head.p3 .ph-num { color: var(--teal); }
   .phase-card-head.p2 .ph-num { color: rgba(255,255,255,0.7); }
+  .phase-card-head.p4 .ph-num { color: var(--navy); opacity: 0.7; }
   .ph-title { font-size: 16px; font-weight: 700; line-height: 1.2; }
   .phase-card-head.p2 .ph-title { color: var(--white); }
   .phase-card-head.p1 .ph-title, .phase-card-head.p3 .ph-title { color: var(--navy); }
+  .phase-card-head.p4 .ph-title { color: var(--navy); }
   .ph-date { font-size: 12px; font-weight: 700; color: var(--gold); margin-top: 6px; }
+  .phase-card-head.p4 .ph-date { color: var(--navy); }
   .phase-card-body { padding: 14px 16px; }
   .phase-card-body p { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 8px; }
   .phase-card-body p:last-child { margin-bottom: 0; }
@@ -98,7 +102,7 @@
   <div class="section">
     <div class="section-title">Cronograma General del Estudio</div>
     <div class="chart-wrap">
-      <div class="chart-title">Distribución temporal por etapas (2024–2027)</div>
+      <div class="chart-title">Distribución temporal esperada por etapas (2024–2027)</div>
       <div style="position:relative; height:260px; margin-top:12px;">
         <canvas id="ganttChart"></canvas>
       </div>
@@ -150,6 +154,20 @@
           <div class="phase-detail"><div class="phase-dot gold"></div><p>Duración: 3 meses consecutivos</p></div>
         </div>
       </div>
+      <div class="phase-card">
+        <div class="phase-card-head p4">
+          <div class="ph-num">FASE 04</div>
+          <div class="ph-title">Difusión de resultados</div>
+          <div class="ph-date">Dic 2026 – Abr 2027</div>
+        </div>
+        <div class="phase-card-body">
+          <div class="phase-detail"><div class="phase-dot"></div><p>Análisis estadístico final con R / RStudio</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Redacción de resultados, discusión y conclusiones</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Presentación en congresos del ámbito (SEEIUC, SOCMIC)</p></div>
+          <div class="phase-detail"><div class="phase-dot"></div><p>Envío del manuscrito a revista científica de interés</p></div>
+          <div class="phase-detail"><div class="phase-dot gold"></div><p>Comunicación de hallazgos al equipo asistencial de la UI</p></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -163,7 +181,7 @@
   <div class="section">
     <div class="section-title">Distribución de observaciones por turno</div>
     <div class="chart-wrap">
-      <div class="chart-title">Modalidades de turno incluidas en la recogida de datos</div>
+      <div class="chart-title">Modalidades de turno esperadas en la recogida de datos</div>
       <div style="position:relative; height:260px; margin-top:12px;">
         <canvas id="turnosChart"></canvas>
       </div>
